@@ -15,7 +15,7 @@ const { report } = require("process");
 // GLOBAL VARIABLES
 let empArray = [];
 
-// ARRAY OF QUESTIONS
+// QUESTION ARRAYS
 
 let questions = [
   {
@@ -25,19 +25,19 @@ let questions = [
   },
   {
     type: "input",
-    message: "Enter Employee id",
+    message: "Enter Employee id.",
     name: "id",
   },
   {
     type: "input",
-    message: "Enter Employee email",
+    message: "Enter Employee email.",
     name: "email",
   },
   {
     type: "list",
     message: "What is the employee's role?",
-    name: "role",
     choices: ["Manager", "Engineer", "Intern"],
+    name: "role",
   },
 ];
 
@@ -47,11 +47,6 @@ let mgrQuestions = [
     message: "What is the manager's office number?",
     name: "office",
   },
-  {
-    type: "confirm",
-    message: "Would you like to add another employee?"["Y/N"],
-    name: "newEmp",
-  },
 ];
 
 let engQuestions = [
@@ -59,11 +54,6 @@ let engQuestions = [
     type: "input",
     message: "What is the Engineer's Github username?",
     name: "github",
-  },
-  {
-    type: "confirm",
-    message: "Would you like to add another employee?"["Y/N"],
-    name: "newEmp",
   },
 ];
 
@@ -73,6 +63,9 @@ let intQuestions = [
     message: "At which school is the intern enrolled?",
     name: "school",
   },
+];
+
+let newEmp = [
   {
     type: "confirm",
     message: "Would you like to add another employee?"["Y/N"],
@@ -83,7 +76,7 @@ let intQuestions = [
 // START INQUIRER
 const run = async () => {
   do {
-    const answers = await inquierer.prompt(questions);
+    const answers = await inquirer.prompt(questions);
     let answersTwo;
     const { name, id, email } = answers;
     let newEmp;
@@ -91,34 +84,37 @@ const run = async () => {
     //  SWITCH STATEMENT
     switch (answers.role) {
       case "Manager":
-        answersTwo = await inquierer.prompt(mgrQuestions);
+        answersTwo = await inquirer.prompt(mgrQuestions);
         const { office } = answersTwo;
         newEmployee = new Manager(name, id, email, office);
         break;
       case "Engineer":
-        answersTwo = await inquierer.prompt(engQuestions);
+        answersTwo = await inquirer.prompt(engQuestions);
         const { github } = answersTwo;
         newEmployee = new Engineer(name, id, email, github);
         break;
       case "Intern":
-        answersTwo = await inquierer.prompt(intQuestions);
-        const { school } = new Intern(name, id, email, school);
+        answersTwo = await inquirer.prompt(intQuestions);
+        const { school } = answersTwo;
+        newEmployee = new Intern(name, id, email, school);
         break;
     }
 
     empArray.push(newEmployee);
-    newEmp = answersTwo.newEmp;
-  } while (newEmp == true);
+    newEmployee = answersTwo.newEmp;
+  } while ("newEmp" == true);
 
   // FS WRITE HTML
 
   let writeHTML = (htmlRenderer) => {
     fs.writeFile(outputPath, htmlRenderer, (err) => {
       if (err) {
-        console.log("ERROR!");
+        console.log(err);
       } else {
         console.log("Rendering File");
       }
     });
   };
 };
+
+run();
